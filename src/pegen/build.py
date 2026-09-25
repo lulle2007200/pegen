@@ -1,3 +1,4 @@
+from pegen.token_spec import TokenSpec
 import pathlib
 import tokenize
 from typing import Dict, Set, Tuple
@@ -7,7 +8,7 @@ from pegen.grammar_parser import GeneratedParser as GrammarParser
 from pegen.parser import Parser
 from pegen.parser_generator import ParserGenerator
 from pegen.python_generator import PythonParserGenerator
-from pegen.tokenizer import Tokenizer
+from pegen.tokenizer import Tokenizer, PyTokenizer
 
 MOD_DIR = pathlib.Path(__file__).resolve().parent
 
@@ -18,7 +19,7 @@ def build_parser(
     grammar_file: str, verbose_tokenizer: bool = False, verbose_parser: bool = False
 ) -> Tuple[Grammar, Parser, Tokenizer]:
     with open(grammar_file) as file:
-        tokenizer = Tokenizer(tokenize.generate_tokens(file.readline), verbose=verbose_tokenizer)
+        tokenizer = PyTokenizer(tokenize.generate_tokens(file.readline), verbose=verbose_tokenizer)
         parser = GrammarParser(tokenizer, verbose=verbose_parser)
         grammar = parser.start()
 
@@ -30,12 +31,13 @@ def build_parser(
 
 def build_python_generator(
     grammar: Grammar,
+    token_spec: TokenSpec,
     grammar_file: str,
     output_file: str,
     skip_actions: bool = False,
 ) -> ParserGenerator:
     with open(output_file, "w") as file:
-        gen: ParserGenerator = PythonParserGenerator(grammar, file)  # TODO: skip_actions
+        gen: ParserGenerator = PythonParserGenerator(grammar, file, token_spec)  # TODO: skip_actions
         gen.generate(grammar_file)
     return gen
 
@@ -43,6 +45,7 @@ def build_python_generator(
 def build_python_parser_and_generator(
     grammar_file: str,
     output_file: str,
+    token_spec: TokenSpec,
     verbose_tokenizer: bool = False,
     verbose_parser: bool = False,
     skip_actions: bool = False,
@@ -61,6 +64,7 @@ def build_python_parser_and_generator(
     grammar, parser, tokenizer = build_parser(grammar_file, verbose_tokenizer, verbose_parser)
     gen = build_python_generator(
         grammar,
+        token_spec,
         grammar_file,
         output_file,
         skip_actions=skip_actions,

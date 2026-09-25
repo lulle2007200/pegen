@@ -8,6 +8,7 @@ from typing import Any, Dict, Type
 import pytest
 from pegen.grammar import Grammar, GrammarError
 from pegen.grammar_parser import GeneratedParser as GrammarParser
+from pegen.py_tokenizer import PyTokenType
 from pegen.parser import Parser
 from pegen.python_generator import PythonParserGenerator
 from pegen.utils import generate_parser, make_parser, parse_string
@@ -314,7 +315,7 @@ def test_left_recursive() -> None:
     baz: NAME?
     """
     grammar: Grammar = parse_string(grammar_source, GrammarParser)
-    parser_class = generate_parser(grammar)
+    parser_class: Type[Parser[PyTokenType]] = generate_parser(grammar)
     rules = grammar.rules
     assert not rules["start"].left_recursive
     assert rules["expr"].left_recursive
@@ -408,7 +409,7 @@ def test_mutually_left_recursive() -> None:
     genr.generate("<string>")
     ns: Dict[str, Any] = {}
     exec(out.getvalue(), ns)
-    parser_class: Type[Parser] = ns["GeneratedParser"]
+    parser_class: Type[Parser[PyTokenType]] = ns["GeneratedParser"]
     node = parse_string("D A C A E", parser_class)
     assert node == [
         [
