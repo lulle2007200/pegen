@@ -1,0 +1,37 @@
+# If true (default), every token used in the grammar must listed under [tokens]. 
+# The parser generator will fail if an unknown token is encountered.
+# If false, the parser generator will succeed, even if unknown tokens are
+# encountered.
+exhaustive = true
+
+# Parser base class of the generated parser, as a dotted path. Unqualified
+# names are looked up in pegen.parser. Imported as "Parser" in the output.
+# Defaults to PyParser if not specified.
+base_parser = "PyParser"
+
+# Decides whether a string literal is keyword-like, and therefore collected
+# into KEYWORDS ('word') or SOFT_KEYWORDS ("word") on the parser.
+# Defaults to [a-zA-Z_]\w*\Z if not specified.
+keyword_re = '[a-zA-Z_]\w*\Z'
+
+# Extra metadata emitted as the PARSER_META dict on the generated parser.
+# Defaults to empty dict if not specified.
+[parser_meta]
+key = "value"
+
+# One [tokens.NAME] entry per token.
+[tokens.NAME]
+# Maps the token to the specified name, if specified.
+# Used as the variable name for the match in the generated code,
+# and for the default method name.
+# Defaults to the token name if not specified.
+maps_to = "name"
+# The call to emit for this token.
+# If not specified, defaults to self.{token name}() or self.{maps_to}().
+calls = "self.expect('NAME')"
+
+
+# If the grammar does not define a trailer *and* the spec is exhaustive 
+# *and* contains all python tokens *and* the base parser is PyParser,
+# parser generator will also emit a main method which uses
+# Pythons tokenizer/ast/exec to process input.

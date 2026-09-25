@@ -1,5 +1,7 @@
 #!/usr/bin/env python3.8
 
+from pegen.py_tokenizer import PyTokenizer
+from pegen.py_tokenizer import PyTokenGenAdapter
 import argparse
 import ast
 import os
@@ -175,8 +177,8 @@ def parse_directory(
 
         def parse(filepath):
             with open(filepath) as f:
-                tokengen = tokenize.generate_tokens(f.readline)
-                tokenizer = Tokenizer(tokengen, verbose=False)
+                tokengen = PyTokenGenAdapter(tokenize.generate_tokens(f.readline))
+                tokenizer = PyTokenizer(tokengen, verbose=False)
                 parser = GeneratedParser(tokenizer, verbose=verbose)
                 return parser.start()
 

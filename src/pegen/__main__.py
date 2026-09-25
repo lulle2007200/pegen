@@ -1,17 +1,22 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3.11
 
 """pegen -- PEG Generator.
 
 Search the web for PEG Parsers for reference.
 """
 
+import pegen
+from pathlib import Path
+import keyword
 import argparse
 import sys
 import time
 import token
 import traceback
+from importlib.resources import files, as_file
 from typing import Tuple
 
+from pegen import parser
 from pegen.build import (
     Grammar,
     Parser,
@@ -20,6 +25,7 @@ from pegen.build import (
     build_python_parser_and_generator,
 )
 from pegen.validator import validate_grammar
+from pegen.token_spec import TokenSpec
 
 
 def generate_python_code(
@@ -32,6 +38,7 @@ def generate_python_code(
         grammar, parser, tokenizer, gen = build_python_parser_and_generator(
             args.grammar_filename,
             args.output,
+            args.token_spec,
             verbose_tokenizer,
             verbose_parser,
             skip_actions=args.skip_actions,
@@ -43,7 +50,6 @@ def generate_python_code(
         traceback.print_exception(err.__class__, err, None)
         sys.stderr.write("For full traceback, use -v\n")
         sys.exit(1)
-
 
 argparser = argparse.ArgumentParser(
     prog="pegen", description="Experimental PEG-like parser generator"
@@ -71,9 +77,21 @@ argparser.add_argument(
     help="Suppress code emission for rule actions",
 )
 
+argparser.add_argument("--token-spec",
+                       default=None,
+                       type=Path,
+                       metavar="TOKENSPEC.toml",
+                       help="Path to token definition toml file."
+                            "Uses python tokens by default.")
 
 def main() -> None:
     args = argparser.parse_args()
+
+    if args.token_spec is not None:
+        args.token_spec = TokenSpec.from_path(args.token_spec)
+    else:
+        with as_file(files(pegen).joinpath("default_tokens.toml")) as p:
+            args.token_spec = TokenSpec.from_path(p)
 
     t0 = time.time()
     grammar, parser, tokenizer, gen = generate_python_code(args)
