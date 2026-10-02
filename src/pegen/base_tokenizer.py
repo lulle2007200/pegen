@@ -44,14 +44,7 @@ class TokenInfoAdapter(NamedTuple, Generic[TokenType]):
     exact_type: Optional[TokenType] 
 
 class TokenGenerator(Iterator[TokenInfo[TokenType]]):
-    def __init__(self, tokengen: Iterator[TokenInfo[TokenType]] | Iterator[TokenInfoWithoutExactType[TokenType]]) -> None:
-        raise NotImplementedError()
-
-    def __iter__(self) -> Iterator[TokenInfo[TokenType]]:
-        raise NotImplementedError()
-
-    def __next__(self) -> TokenInfo[TokenType]:
-        raise NotImplementedError()
+    ...
 
 class TokenGeneratorAdapter(TokenGenerator[TokenType]):
     def __init__(self, tokengen: Iterator[TokenInfo[TokenType]] | Iterator[TokenInfoWithoutExactType[TokenType]]) -> None:
@@ -113,13 +106,14 @@ class BaseTokenizer(Generic[TokenType]):
         if verbose:
             self.report(False, False)
 
-    def getnext(self) -> TokenInfo:
+    def getnext(self) -> TokenInfo[TokenType]:
         """Return the next token and updates the index."""
         cached = not self._index == len(self._tokens)
         tok = self.peek()
         self._index += 1
         if self._verbose:
             self.report(cached, False)
+        print((tok.exact_type, tok.string, tok.line, tok.start, tok.end, tok.type))
         return tok
 
     def get_last_token(self) -> Optional[TokenInfo[TokenType]]:
@@ -135,7 +129,7 @@ class BaseTokenizer(Generic[TokenType]):
                 return True
         return False
 
-    def peek(self) -> TokenInfo:
+    def peek(self) -> TokenInfo[TokenType]:
         """Return the next token *without* updating the index."""
         while self._index == len(self._tokens):
             tok = next(self._tokengen)
@@ -146,7 +140,7 @@ class BaseTokenizer(Generic[TokenType]):
                 self._lines[tok.start[0]] = tok.line
         return self._tokens[self._index]
 
-    def diagnose(self) -> TokenInfo:
+    def diagnose(self) -> TokenInfo[TokenType]:
         if not self._tokens:
             self.getnext()
         return self._tokens[-1]

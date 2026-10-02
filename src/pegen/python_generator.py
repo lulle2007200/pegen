@@ -271,8 +271,10 @@ class PythonParserGenerator(ParserGenerator, GrammarVisitor):
 
         self.print()
         with self.indent():
-            self.print(f"KEYWORDS = {tuple(sorted(self.callmakervisitor.keywords))}")
-            self.print(f"SOFT_KEYWORDS = {tuple(sorted(self.callmakervisitor.soft_keywords))}")
+            if self.callmakervisitor.keywords:
+                self.print(f"KEYWORDS = {tuple(sorted(self.callmakervisitor.keywords))}")
+            if self.callmakervisitor.soft_keywords:
+                self.print(f"SOFT_KEYWORDS = {tuple(sorted(self.callmakervisitor.soft_keywords))}")
             if self.token_spec.parser_meta:
                 self.print(f"PARSER_META = {self.token_spec.parser_meta!r}")
 

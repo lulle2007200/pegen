@@ -154,9 +154,9 @@ def memoize_left_rec(method: Callable[[P], Optional[T]]) -> Callable[[P], Option
 class BaseParser(Generic[TokenType]):
     """Parsing base class."""
 
-    KEYWORDS: ClassVar[Tuple[str, ...]]
+    KEYWORDS: ClassVar[Tuple[str, ...]] = ()
 
-    SOFT_KEYWORDS: ClassVar[Tuple[str, ...]]
+    SOFT_KEYWORDS: ClassVar[Tuple[str, ...]] = ()
 
     PARSER_META: ClassVar[dict[str, Any]] = {}
 
@@ -195,17 +195,17 @@ class BaseParser(Generic[TokenType]):
         return f"{tok.start[0]}.{tok.start[1]}: {tok.type.name}:{tok.string!r}"
 
     @memoize
-    def expect(self, type: str) -> Optional[TokenInfo]:
+    def expect(self, type: str) -> Optional[TokenInfo[TokenType]]:
         tok = self._tokenizer.peek()
         if tok.string == type:
             return self._tokenizer.getnext()
-        elif tok.exact_type is not None and tok.exact_type.name == type:
-            return self._tokenizer.getnext()
         elif tok.type.name == type:
+            return self._tokenizer.getnext()
+        elif tok.exact_type is not None and tok.exact_type.name == type:
             return self._tokenizer.getnext()
         return None
 
-    def expect_forced(self, res: Any, expectation: str) -> Optional[TokenInfo]:
+    def expect_forced(self, res: Any, expectation: str) -> Optional[TokenInfo[TokenType]]:
         if res is None:
             raise self.make_syntax_error(f"expected {expectation}")
         return res

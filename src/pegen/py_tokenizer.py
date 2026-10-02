@@ -22,7 +22,7 @@ class PyTokenInfo(NamedTuple):
 
     @property
     def exact_type(self) -> Optional[PyTokenType]:
-        if self.type.value in exact_token_types.values():
+        if self.string in exact_token_types:
             return PyTokenType(exact_token_types[self.string])
         return None
     
