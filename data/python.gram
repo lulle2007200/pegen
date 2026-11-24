@@ -8,7 +8,6 @@ import io
 import itertools
 import os
 import sys
-import token
 from typing import (
     Any, Callable, Iterator, List, Literal, NoReturn, Sequence, Tuple, TypeVar, Union
 )
@@ -122,7 +121,7 @@ class Parser(Parser):
     @memoize
     def fstring_start(self) -> Optional[tokenize.TokenInfo]:
         tok = self._tokenizer.peek()
-        if tok.type == FSTRING_START:
+        if tok.type.name == "FSTRING_START":
             tok = self._tokenizer.getnext()
             self._fstring_raw_stack.append("r" in tok.string.lower())
             return tok
@@ -131,7 +130,7 @@ class Parser(Parser):
     @memoize
     def fstring_end(self) -> Optional[tokenize.TokenInfo]:
         tok = self._tokenizer.peek()
-        if tok.type == FSTRING_END:
+        if tok.type.name == "FSTRING_END":
             tok = self._tokenizer.getnext()
             if self._fstring_raw_stack:
                 self._fstring_raw_stack.pop()
