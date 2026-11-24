@@ -37,10 +37,10 @@ class TokenInfo(TokenInfoWithoutExactType[TokenTypeCo], Protocol):
 
 class TokenInfoAdapter(NamedTuple, Generic[TokenType]):
     type: TokenType
-    line: str
     string: str
     start: Position
     end: Position
+    line: str
     exact_type: Optional[TokenType] 
 
 class TokenGenerator(Iterator[TokenInfo[TokenType]]):
@@ -58,9 +58,10 @@ class TokenGeneratorAdapter(TokenGenerator[TokenType]):
 
         res: TokenInfo[TokenType]
         if not hasattr(tok, "exact_type"):
-            res = TokenInfoAdapter(tok.type, tok.line, 
+            res = TokenInfoAdapter(tok.type,  
                                    tok.string, 
-                                   tok.start, tok.end, 
+                                   tok.start, tok.end,
+                                   tok.line,
                                    None)
         else:
             res = cast(TokenInfo[TokenType], tok)

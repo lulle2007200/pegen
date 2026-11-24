@@ -15,10 +15,10 @@ else:
 
 class PyTokenInfo(NamedTuple):
     type: PyTokenType
-    line: str
     string: str
     start: Position
     end: Position
+    line: str
 
     @property
     def exact_type(self) -> Optional[PyTokenType]:
@@ -38,10 +38,10 @@ class PyTokenGenerator(TokenGenerator[PyTokenType]):
 
         res: TokenInfo[PyTokenType]
         if type(tok) is tokenize.TokenInfo:
-            res = PyTokenInfo(PyTokenType(tok.type), tok.line, tok.string, tok.start, tok.end)
+            res = PyTokenInfo(PyTokenType(tok.type), tok.string, tok.start, tok.end, tok.line)
         elif not hasattr(tok, "exact_type"):
             tok = cast(TokenInfo[PyTokenType], tok)
-            res = PyTokenInfo(tok.type, tok.line, tok.string, tok.start, tok.end)
+            res = PyTokenInfo(tok.type, tok.string, tok.start, tok.end, tok.line)
         else:
             res = cast(TokenInfo[PyTokenType], tok)
 
