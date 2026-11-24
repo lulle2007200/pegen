@@ -1,3 +1,8 @@
+import io
+import re
+import keyword
+import tomllib
+from importlib.resources import files
 from types import ModuleType
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -6,9 +11,6 @@ from pegen import parser
 from pegen import tokenizer
 from pegen.parser import BaseParser
 from pegen.tokenizer import Tokenizer
-import re
-import keyword
-import tomllib
 
 @dataclass(frozen=True)
 class TokenDef:
@@ -103,3 +105,7 @@ class TokenSpec:
     def from_path(cls, path: Path) -> TokenSpec:
         with open(path, "rb") as f:
             return cls.from_file(f)
+
+DEFAULT_TOKEN_SPEC: TokenSpec = TokenSpec.from_file(
+    io.BytesIO(files("pegen").joinpath("default_tokens.toml").read_bytes())
+)

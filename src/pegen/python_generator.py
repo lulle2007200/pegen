@@ -1,6 +1,6 @@
 from enum import IntEnum
 from pegen.py_tokenizer import PyTokenType
-from pegen.token_spec import TokenSpec
+from pegen.token_spec import DEFAULT_TOKEN_SPEC, TokenSpec
 import ast
 import re
 from typing import IO, Any, Dict, List, Optional, Sequence, Set, Text, Tuple
@@ -231,7 +231,7 @@ class PythonParserGenerator(ParserGenerator, GrammarVisitor):
         self,
         grammar: grammar.Grammar,
         file: Optional[IO[Text]],
-        token_spec: TokenSpec,
+        token_spec: TokenSpec = DEFAULT_TOKEN_SPEC,
         location_formatting: Optional[str] = None,
         unreachable_formatting: Optional[str] = None,
     ):

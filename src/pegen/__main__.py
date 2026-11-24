@@ -5,7 +5,6 @@
 Search the web for PEG Parsers for reference.
 """
 
-import pegen
 from pathlib import Path
 import keyword
 import argparse
@@ -13,7 +12,6 @@ import sys
 import time
 import token
 import traceback
-from importlib.resources import files, as_file
 from typing import Tuple
 
 from pegen import parser
@@ -25,7 +23,7 @@ from pegen.build import (
     build_python_parser_and_generator,
 )
 from pegen.validator import validate_grammar
-from pegen.token_spec import TokenSpec
+from pegen.token_spec import TokenSpec, DEFAULT_TOKEN_SPEC
 
 
 def generate_python_code(
@@ -90,8 +88,7 @@ def main() -> None:
     if args.token_spec is not None:
         args.token_spec = TokenSpec.from_path(args.token_spec)
     else:
-        with as_file(files(pegen).joinpath("default_tokens.toml")) as p:
-            args.token_spec = TokenSpec.from_path(p)
+        args.token_spec = DEFAULT_TOKEN_SPEC
 
     t0 = time.time()
     grammar, parser, tokenizer, gen = generate_python_code(args)

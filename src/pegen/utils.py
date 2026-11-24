@@ -7,7 +7,8 @@ from typing import Any, Dict, Final, Optional, Type, cast, TextIO
 
 from pegen.grammar import Grammar
 from pegen.grammar_parser import GeneratedParser as GrammarParser
-from pegen.python_generator import PythonParserGenerator, default_tokens
+from pegen.python_generator import PythonParserGenerator
+from pegen.token_spec import DEFAULT_TOKEN_SPEC, TokenSpec
 from pegen.tokenizer import TokenType
 from pegen.parser import BaseParser, PyParser, ParserFactory
 from pegen.py_tokenizer import PyTokenType
@@ -31,14 +32,11 @@ def generate_parser(
     grammar: Grammar, 
     parser_path: Optional[str] = None, 
     parser_name: str = "GeneratedParser",
-    parser_class: str = "PyParser",
-    parser_args: dict[str, Any] = {},
-    tokens: Optional[set[str]] = default_tokens,
-
+    token_spec: TokenSpec = DEFAULT_TOKEN_SPEC,
 ) -> Type[BaseParser[TokenType]]:
     # Generate a parser.
     out = io.StringIO()
-    genr = PythonParserGenerator(grammar, out, parser_class, parser_args, tokens)
+    genr = PythonParserGenerator(grammar, out, token_spec)
     genr.generate("<string>")
 
     # Load the generated parser class.

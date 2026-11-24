@@ -113,7 +113,6 @@ class BaseTokenizer(Generic[TokenType]):
         self._index += 1
         if self._verbose:
             self.report(cached, False)
-        print((tok.exact_type, tok.string, tok.line, tok.start, tok.end, tok.type))
         return tok
 
     def get_last_token(self) -> Optional[TokenInfo[TokenType]]:
