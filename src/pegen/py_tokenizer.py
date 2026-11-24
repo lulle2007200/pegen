@@ -66,7 +66,7 @@ class PyTokenizer(BaseTokenizer[PyTokenType]):
     def should_skip(self, tok: TokenInfo[PyTokenType]) -> bool:
         if super().should_skip(tok):
             return True
-        elif (tok.type == PyTokenType.ERRORTOKEN and tok.string == " "):
+        elif (tok.type == PyTokenType.ERRORTOKEN and tok.string.isspace()):
             return True
         else:
             return False                

@@ -39,7 +39,7 @@ class TokenSpec:
             raise ValueError(f"{option_name} {class_ref!r} is not a valid parser class path.")
 
         dots = len(class_ref) - len(class_ref.lstrip("."))
-        prefix = "." * dots + ".".join(parts[:-2])
+        prefix = "." * dots + ".".join(parts[:-1])
         class_name = parts[-1]
 
         if not isinstance(self.parser_meta, dict):
